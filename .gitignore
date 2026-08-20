@@ -5,3 +5,4 @@ node_modules/
 # deprecated abstract plates + probe iterations (kept locally, not in repo)
 assets/img/works/pack-*.png
 assets/img/works/probes/
+assets/img/works/_last_run_report.json

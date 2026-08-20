@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-дизайнер спортивных и киберспортивных медиа — портфолио</title>
+<meta name="description" content="Портфолио AI-дизайнера: матчдэй-серии, HUD-статистика, breaking news — серийное производство визуала для спортивных и киберспортивных медиа.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg0:#05060a;
+    --bg1:#0a0d14;
+    --ink:#f3efe7;
+    --ink-dim:rgba(243,239,231,.6);
+    --ink-faint:rgba(148,163,184,.55);
+    --cyan:#22d3ee;
+    --cyan-soft:rgba(34,211,238,.55);
+    --cyan-dim:rgba(34,211,238,.12);
+    --line:rgba(148,163,184,.14);
+    --glass:linear-gradient(160deg, rgba(18,24,34,.66), rgba(10,13,20,.52));
+    --font-d:'Unbounded',system-ui,sans-serif;
+    --font-b:'Manrope',system-ui,sans-serif;
+    --font-m:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg0);
+    color:var(--ink);
+    font-family:var(--font-b);
+    font-size:16px;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(34,211,238,.3);color:#fff}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:var(--bg0)}
+  ::-webkit-scrollbar-thumb{background:#1a2230;border-radius:6px}
+  a{outline:none}
+  a:focus-visible,.tilt:focus-visible{outline:1px solid var(--cyan);outline-offset:3px}
+  img{user-select:none}
+
+  /* ---------- фоновые слои ---------- */
+  #bg3d{position:fixed;inset:0;width:100%;height:100%;z-index:-3;display:block}
+  .bg-grid{
+    position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(148,163,184,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(148,163,184,.045) 1px,transparent 1px);
+    background-size:72px 72px;
+    -webkit-mask-image:radial-gradient(ellipse 95% 75% at 50% 28%,#000 25%,transparent 78%);
+    mask-image:radial-gradient(ellipse 95% 75% at 50% 28%,#000 25%,transparent 78%);
+  }
+  .vignette{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(125% 95% at 50% 0%,transparent 42%,rgba(5,6,10,.6) 100%);
+  }
+  .noise{
+    position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  #progress{
+    position:fixed;top:0;left:0;right:0;height:2px;z-index:70;
+    background:linear-gradient(90deg,var(--cyan),rgba(34,211,238,.35));
+    transform-origin:0 50%;transform:scaleX(0);
+  }
+
+  /* ---------- утилиты ---------- */
+  .kicker{
+    font-family:var(--font-m);font-size:11px;font-weight:500;
+    letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);
+  }
+  .glass{
+    background:var(--glass);
+    backdrop-filter:blur(14px) saturate(1.25);
+    -webkit-backdrop-filter:blur(14px) saturate(1.25);
+    border:1px solid var(--line);
+  }
+  .hud{position:relative}
+  .hud::before,.hud::after{
+    content:"";position:absolute;width:15px;height:15px;pointer-events:none;z-index:4;
+  }
+  .hud::before{top:-1px;left:-1px;border-top:1px solid var(--cyan-soft);border-left:1px solid var(--cyan-soft)}
+  .hud::after{bottom:-1px;right:-1px;border-bottom:1px solid var(--cyan-soft);border-right:1px solid var(--cyan-soft)}
+  .tilt{transition:transform .3s cubic-bezier(.2,.7,.2,1);will-change:transform;transform-style:preserve-3d}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* плейсхолдер под ещё не доставленные ассеты */
+  .ph{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    justify-content:space-between;padding:14px;
+    background:
+      radial-gradient(130% 95% at 18% 8%, hsl(var(--fh,200) 85% 55% / .26), transparent 62%),
+      radial-gradient(110% 110% at 86% 92%, hsl(var(--fh,200) 70% 42% / .15), transparent 58%),
+      repeating-linear-gradient(0deg, rgba(148,163,184,.05) 0 1px, transparent 1px 26px),
+      repeating-linear-gradient(90deg, rgba(148,163,184,.05) 0 1px, transparent 1px 26px),
+      linear-gradient(155deg,#0b0f16,#05060a);
+  }
+  .ph::after{
+    content:"";position:absolute;top:50%;left:50%;width:26px;height:26px;
+    transform:translate(-50%,-50%);
+    background:
+      linear-gradient(var(--cyan-soft),var(--cyan-soft)) center/1px 100% no-repeat,
+      linear-gradient(var(--cyan-soft),var(--cyan-soft)) center/100% 1px no-repeat;
+    opacity:.5;
+  }
+  .ph-tag{font-family:var(--font-m);font-size:10px;font-weight:700;letter-spacing:.22em;color:rgba(243,239,231,.75)}
+  .ph-meta{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:var(--ink-faint);align-self:flex-end}
+
+  /* ---------- навигация ---------- */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:40;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding:18px 32px;transition:padding .3s,background .3s,border-color .3s;
+    border-bottom:1px solid transparent;
+  }
+  .nav.scrolled{
+    background:rgba(5,6,10,.72);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom-color:var(--line);padding:10px 32px;
+  }
+  .logo{font-family:var(--font-m);font-weight:700;font-size:13px;letter-spacing:.12em;color:var(--ink);text-decoration:none;white-space:nowrap}
+  .logo em{color:var(--cyan);font-style:normal}
+  .nav-links{display:flex;gap:26px}
+  .nav-links a{
+    font-family:var(--font-m);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-dim);text-decoration:none;transition:color .2s;white-space:nowrap;
+  }
+  .nav-links a:hover,.nav-links a.active{color:var(--cyan)}
+  .nav-meta{font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--ink-faint);white-space:nowrap}
+
+  /* ---------- hero ---------- */
+  .hero{min-height:100svh;position:relative;display:flex;align-items:center;padding:130px 32px 90px;overflow:hidden}
+  .hero-scene{width:min(1280px,100%);margin:0 auto;position:relative;perspective:1400px}
+  .hero-copy{position:relative;z-index:5;max-width:660px}
+  .hero h1{
+    font-family:var(--font-d);font-weight:800;text-transform:uppercase;
+    font-size:clamp(2rem,5.4vw,4.6rem);line-height:1.05;letter-spacing:-.01em;
+    margin:20px 0 24px;
+  }
+  .hero h1 .acc{color:var(--cyan);text-shadow:0 0 34px rgba(34,211,238,.35)}
+  .lead{color:var(--ink-dim);font-size:clamp(15px,1.4vw,17.5px);max-width:540px}
+  .cta-row{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--font-m);font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    text-decoration:none;padding:14px 26px;border-radius:10px;
+    transition:transform .25s,box-shadow .25s,border-color .25s,color .25s;
+  }
+  .btn-primary{background:var(--cyan);color:#032530;font-weight:700}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(34,211,238,.35)}
+  .btn-ghost{border:1px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--cyan-soft);color:var(--cyan);transform:translateY(-2px)}
+  .hero-stats{display:flex;gap:38px;margin-top:46px;list-style:none;flex-wrap:wrap}
+  .hero-stats b{font-family:var(--font-m);font-size:21px;font-weight:700;display:block;color:var(--ink)}
+  .hero-stats span{font-family:var(--font-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint)}
+
+  .hero-visual{
+    position:absolute;top:50%;right:-10px;margin-top:-290px;
+    width:54%;height:580px;z-index:2;perspective:1200px;
+  }
+  .float-wrap{position:absolute}
+  .fw-1{width:430px;top:70px;left:0;z-index:3}
+  .fw-2{width:350px;top:-20px;right:0;z-index:1}
+  .fw-3{width:330px;bottom:0;right:130px;z-index:4}
+  .hero-card{border-radius:16px;overflow:hidden;box-shadow:0 34px 90px rgba(0,0,0,.55)}
+  .fw-1 .hero-card{transform:rotateY(-13deg) rotateX(4deg)}
+  .fw-2 .hero-card{transform:rotateY(-22deg) rotateX(6deg) scale(.94)}
+  .fw-3 .hero-card{transform:rotateY(-7deg) rotateX(-3deg)}
+  .card-anim{animation:floaty 7.5s ease-in-out infinite}
+  .fw-2 .card-anim{animation-duration:9.5s;animation-delay:-2.4s}
+  .fw-3 .card-anim{animation-duration:8.4s;animation-delay:-4.2s}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+  .hc-media{position:relative;aspect-ratio:16/10;overflow:hidden}
+  .hc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .hc-foot{
+    display:flex;justify-content:space-between;gap:10px;padding:11px 15px;
+    border-top:1px solid var(--line);
+    font-family:var(--font-m);font-size:9.5px;letter-spacing:.18em;color:var(--ink-dim);
+  }
+  .hc-foot span:first-child{color:var(--cyan)}
+  .hero-hud{position:absolute;font-family:var(--font-m);font-size:10px;letter-spacing:.24em;color:rgba(148,163,184,.45);z-index:6}
+  .hh-tl{left:32px;bottom:30px}
+  .hh-tr{right:32px;top:100px}
+  .hh-bc{left:50%;bottom:26px;transform:translateX(-50%)}
+
+  /* ---------- секции ---------- */
+  .section{position:relative;width:min(1280px,100%);margin:0 auto;padding:120px 32px;scroll-margin-top:70px}
+  .sec-head{max-width:740px;margin-bottom:58px}
+  .sec-head h2{
+    font-family:var(--font-d);font-weight:600;
+    font-size:clamp(1.55rem,3.4vw,2.55rem);line-height:1.16;
+    margin:16px 0 18px;
+  }
+  .sec-note{color:var(--ink-dim);font-size:15px;max-width:620px}
+
+  /* ---------- работы ---------- */
+  .works-wall{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;perspective:1400px}
+  .work-card:nth-child(3n+2){margin-top:38px}
+  .work-tilt{border-radius:16px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.45)}
+  .work-media{position:relative;aspect-ratio:16/10;overflow:hidden;border-bottom:1px solid var(--line)}
+  .work-media img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+    transition:transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .work-tilt:hover .work-media img{transform:scale(1.05)}
+  .wm-label{
+    position:absolute;top:10px;left:10px;z-index:3;
+    font-family:var(--font-m);font-size:9px;letter-spacing:.18em;color:rgba(243,239,231,.85);
+    background:rgba(5,6,10,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    padding:5px 9px;border-radius:6px;border:1px solid rgba(148,163,184,.2);
+  }
+  .work-info{padding:17px 18px 19px;display:flex;flex-direction:column;gap:8px}
+  .tag{font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--cyan)}
+  .work-info h3{font-size:15px;font-weight:600;line-height:1.45}
+
+  /* ---------- кейсы ---------- */
+  .case{display:grid;grid-template-columns:1.05fr 1fr;gap:60px;align-items:center;margin-bottom:120px}
+  .case:last-child{margin-bottom:0}
+  .case:nth-child(even) .case-visual{order:2}
+  .case-visual{position:relative;perspective:1200px}
+  .case-frame{
+    position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;
+    box-shadow:0 34px 90px rgba(0,0,0,.55);
+  }
+  .case-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .case-chip{
+    position:absolute;right:-16px;bottom:-24px;z-index:5;
+    padding:14px 20px;border-radius:12px;display:flex;flex-direction:column;gap:2px;
+    box-shadow:0 18px 50px rgba(0,0,0,.5);
+  }
+  .case-chip b{font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--cyan)}
+  .case-chip span{font-family:var(--font-m);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+  .case-body h3{
+    font-family:var(--font-d);font-weight:600;
+    font-size:clamp(1.25rem,2.4vw,1.85rem);line-height:1.2;margin:14px 0 26px;
+  }
+  .psr{display:flex;flex-direction:column}
+  .psr>div{display:grid;grid-template-columns:112px 1fr;gap:18px;padding:17px 0;border-top:1px solid var(--line)}
+  .psr>div:last-child{border-bottom:1px solid var(--line)}
+  .psr dt{font-family:var(--font-m);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);padding-top:4px}
+  .psr dd{color:var(--ink-dim);font-size:14.5px}
+
+  /* ---------- навыки (бенто) ---------- */
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .bcell{border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:12px}
+  .b-hero{grid-column:span 2;grid-row:span 2;justify-content:space-between;gap:20px}
+  .b-wide{grid-column:span 4}
+  .bnum{font-family:var(--font-m);font-weight:700;font-size:clamp(2.8rem,5.6vw,4.4rem);line-height:1;color:var(--ink)}
+  .bnum .acc{color:var(--cyan)}
+  .bcell h3{font-family:var(--font-d);font-weight:600;font-size:15px}
+  .bcell p{color:var(--ink-dim);font-size:13.5px;flex:1}
+  .bmeta{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:var(--ink-faint)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    font-family:var(--font-m);font-size:11px;letter-spacing:.05em;
+    padding:8px 14px;border-radius:999px;border:1px solid var(--line);
+    color:var(--ink-dim);background:rgba(148,163,184,.05);
+    transition:transform .25s,border-color .25s,color .25s;
+  }
+  .chip:hover{border-color:var(--cyan-soft);color:var(--cyan);transform:translateY(-2px)}
+
+  /* ---------- процесс ---------- */
+  .steps{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:relative}
+  .steps::before{
+    content:"";position:absolute;top:0;left:6%;right:6%;height:1px;
+    background:linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent);
+  }
+  .step{border-radius:16px;padding:26px 24px;display:flex;flex-direction:column;gap:11px}
+  .step-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .snum{font-family:var(--font-m);font-weight:700;font-size:26px;color:var(--cyan)}
+  .smeta{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;color:var(--ink-faint)}
+  .step h3{font-size:15px;font-weight:700;line-height:1.4}
+  .step p{color:var(--ink-dim);font-size:13px}
+
+  /* ---------- контакты ---------- */
+  .contacts{padding-bottom:90px}
+  .contact-panel{max-width:880px;margin:0 auto;border-radius:20px;padding:56px}
+  .contact-panel h2{
+    font-family:var(--font-d);font-weight:600;
+    font-size:clamp(1.5rem,3.2vw,2.4rem);line-height:1.18;margin:16px 0 18px;
+  }
+  .contact-panel>p{color:var(--ink-dim);font-size:15px;max-width:560px}
+  .contact-rows{margin-top:34px}
+  .crow{
+    display:flex;align-items:center;gap:18px;padding:20px 0;
+    border-top:1px solid var(--line);text-decoration:none;color:var(--ink);
+  }
+  .crow:last-child{border-bottom:1px solid var(--line)}
+  .ckey{font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--cyan);width:92px;flex:none}
+  .cval{font-family:var(--font-m);font-size:15px;flex:1;word-break:break-all}
+  .cgo{color:var(--cyan);transition:transform .2s}
+  .crow:hover .cgo{transform:translateX(6px)}
+  .crow:hover .cval{color:var(--cyan)}
+  .cnote{font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--ink-faint);margin-top:24px}
+  .footer{
+    padding:30px 32px;text-align:center;
+    font-family:var(--font-m);font-size:10px;letter-spacing:.18em;color:rgba(148,163,184,.4);
+    border-top:1px solid var(--line);
+  }
+
+  /* ---------- фильтр работ ---------- */
+  .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin:-20px 0 40px}
+  .fchip{
+    font-family:var(--font-m);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-dim);background:rgba(148,163,184,.05);border:1px solid var(--line);
+    border-radius:999px;padding:9px 16px;cursor:pointer;
+    transition:color .25s,border-color .25s,background .25s;
+  }
+  .fchip span{color:var(--ink-faint);margin-left:6px}
+  .fchip:hover{border-color:var(--cyan-soft);color:var(--cyan)}
+  .fchip.is-active{border-color:var(--cyan-soft);color:var(--cyan);background:var(--cyan-dim)}
+  .fchip.is-active span{color:rgba(34,211,238,.6)}
+  .is-filtered-out{display:none}
+  .anim-in{animation:cardIn .55s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes cardIn{from{opacity:0;transform:translateZ(-70px) translateY(16px)}to{opacity:1;transform:none}}
+
+  /* ---------- стек визуалов кейса ---------- */
+  .case-mini{
+    position:absolute;width:36%;aspect-ratio:16/10;border-radius:12px;overflow:hidden;
+    box-shadow:0 22px 60px rgba(0,0,0,.5);z-index:4;border:1px solid var(--line);
+    background:var(--bg1);
+  }
+  .case-mini img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .case-mini .ph{padding:10px}
+  .case-mini .ph::after{display:none}
+  .case-mini .ph-tag{font-size:8px;letter-spacing:.16em}
+  .cm-1{top:-26px;right:-14px;transform:rotate(4deg)}
+  .cm-2{bottom:-30px;left:-18px;transform:rotate(-5deg)}
+  .cm-3{top:34%;right:-34px;transform:rotate(3deg)}
+
+  /* ---------- адаптив ---------- */
+  @media (max-width:1080px){
+    .hero{padding-top:120px}
+    .hero-copy{max-width:100%}
+    .hero-visual{
+      position:relative;top:auto;right:auto;margin:60px 0 0;
+      width:100%;height:auto;display:flex;gap:16px;
+      overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px;perspective:none;
+    }
+    .float-wrap{position:relative;top:auto;left:auto;right:auto;bottom:auto;flex:0 0 76%;scroll-snap-align:center}
+    .fw-1,.fw-2,.fw-3{width:auto}
+    .hero-card{transform:none!important}
+    .card-anim{animation:none}
+    .works-wall{grid-template-columns:repeat(2,1fr)}
+    .work-card:nth-child(3n+2){margin-top:0}
+    .case{grid-template-columns:1fr;gap:36px;margin-bottom:90px}
+    .case:nth-child(even) .case-visual{order:0}
+    .bento{grid-template-columns:repeat(2,1fr)}
+    .b-hero{grid-column:span 2;grid-row:auto}
+    .b-wide{grid-column:span 2}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .steps::before{display:none}
+    .case-visual{margin-bottom:24px}
+    .cm-1{top:-16px;right:0}
+    .cm-2{bottom:-18px;left:0}
+    .cm-3{display:none}
+  }
+  @media (max-width:640px){
+    .section{padding:84px 20px}
+    .hero{padding:104px 20px 72px}
+    .nav{padding:12px 16px;gap:14px}
+    .nav.scrolled{padding:10px 16px}
+    .nav-meta{display:none}
+    .nav-links{gap:16px;overflow-x:auto;scrollbar-width:none}
+    .nav-links::-webkit-scrollbar{display:none}
+    .works-wall{grid-template-columns:1fr}
+    .bento{grid-template-columns:1fr}
+    .b-hero,.b-wide{grid-column:span 1}
+    .steps{grid-template-columns:1fr}
+    .contact-panel{padding:34px 22px}
+    .hero-stats{gap:24px}
+    .hh-tr{display:none}
+    .case-chip{right:10px;bottom:-20px}
+    .psr>div{grid-template-columns:1fr;gap:6px}
+    .crow{gap:12px}
+    .ckey{width:74px}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg3d" aria-hidden="true"></canvas>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+<div id="progress" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="logo" href="#hero">[ AI<em>//</em>DSGN ]</a>
+  <nav class="nav-links" aria-label="Основная навигация">
+    <a href="#works">Работы</a>
+    <a href="#cases">Кейсы</a>
+    <a href="#skills">Навыки</a>
+    <a href="#process">Процесс</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+  <span class="nav-meta">21.08.2026 // LIVE</span>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="hero">
+    <div class="hero-scene">
+      <div class="hero-copy" data-scroll="0.05">
+        <p class="kicker">Портфолио // AI-дизайн // Спорт + киберспорт</p>
+        <h1>Не генерирую картинки — <span class="acc">произвожу визуал.</span></h1>
+        <p class="lead">AI-дизайнер спортивных и киберспортивных медиа. Матчдэй-серии, HUD-статистика и breaking news — серийное производство в единой системе, со скоростью новостного цикла.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#works">Смотреть работы</a>
+          <a class="btn btn-ghost" href="#contacts">Связаться</a>
+        </div>
+        <ul class="hero-stats">
+          <li><b>30 000+</b><span>оплаченных артефактов</span></li>
+          <li><b>~2 000</b><span>артефактов в месяц</span></li>
+          <li><b>12+</b><span>макетов за цикл</span></li>
+        </ul>
+      </div>
+
+      <div class="hero-visual" data-scroll="-0.04">
+        <div class="float-wrap fw-1" data-depth="0.55">
+          <div class="tilt hero-card glass hud" data-base="rotateY(-13deg) rotateX(4deg)" data-tilt="6">
+            <div class="card-anim">
+              <div class="hc-media" style="--fh:42">
+                <div class="ph"><span class="ph-tag">HERITAGE</span><span class="ph-meta">EVENT // ЧМ-2026</span></div>
+                <img src="assets/img/works/final/evt-spain-wc2026.png" alt="Карточка «Испания — чемпион мира 2026»" fetchpriority="high" decoding="async" data-fallback>
+              </div>
+              <div class="hc-foot"><span>ФИНАЛ // ЧМ-2026</span><span>HERITAGE</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="float-wrap fw-2" data-depth="1.1">
+          <div class="tilt hero-card glass hud" data-base="rotateY(-22deg) rotateX(6deg) scale(.94)" data-tilt="8">
+            <div class="card-anim">
+              <div class="hc-media" style="--fh:195">
+                <div class="ph"><span class="ph-tag">CINEMATIC</span><span class="ph-meta">EVENT // LA LIGA</span></div>
+                <img src="assets/img/works/final/evt-mbappe-real.png" alt="Карточка «Мбаппе. Новая эра» — Реал Мадрид" decoding="async" data-fallback>
+              </div>
+              <div class="hc-foot"><span>МБАППЕ // РЕАЛ</span><span>CINEMATIC</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="float-wrap fw-3" data-depth="0.85">
+          <div class="tilt hero-card glass hud" data-base="rotateY(-7deg) rotateX(-3deg)" data-tilt="7">
+            <div class="card-anim">
+              <div class="hc-media" style="--fh:215">
+                <div class="ph"><span class="ph-tag">BROADCAST</span><span class="ph-meta">EVENT // CS2</span></div>
+                <img src="assets/img/works/final/evt-navi-ewc.png" alt="Карточка «NAVI выиграли Esports World Cup»" decoding="async" data-fallback>
+              </div>
+              <div class="hc-foot"><span>NAVI // EWC 2026</span><span>BROADCAST</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <span class="hero-hud hh-tl">55.75°N // 37.61°E</span>
+    <span class="hero-hud hh-tr">MATCHDAY // 21.08.2026</span>
+    <span class="hero-hud hh-bc">SCROLL ↓</span>
+  </section>
+
+  <!-- ============ РАБОТЫ ============ -->
+  <section class="section" id="works">
+    <div class="sec-head reveal">
+      <p class="kicker">01 // Работы</p>
+      <h2>Карточки реальных инфоповодов</h2>
+      <p class="sec-note">Двадцать событий сезона — футбол, киберспорт, теннис, F1, бокс — в единой editorial-системе. Каждая карточка — воспроизводимый пайплайн, а не один удачный прогон.</p>
+    </div>
+
+    <div class="filter-row reveal" role="group" aria-label="Фильтр по виду спорта">
+      <button class="fchip is-active" type="button" data-filter="all">Все <span>20</span></button>
+      <button class="fchip" type="button" data-filter="football">Футбол <span>8</span></button>
+      <button class="fchip" type="button" data-filter="esports">Киберспорт <span>8</span></button>
+      <button class="fchip" type="button" data-filter="other">Другие виды <span>4</span></button>
+    </div>
+
+    <div class="works-wall" data-depth="0.1">
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:42">
+            <div class="ph"><span class="ph-tag">HERITAGE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-spain-wc2026.png" alt="Испания — чемпион мира 2026" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">ФИНАЛ // ЧМ-2026</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">HERITAGE</span>
+            <h3>Испания — чемпион мира 2026</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:195">
+            <div class="ph"><span class="ph-tag">CINEMATIC</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-mbappe-real.png" alt="Мбаппе. Новая эра — Реал Мадрид" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">РЕАЛ МАДРИД</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">CINEMATIC</span>
+            <h3>Мбаппе. Новая эра</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:215">
+            <div class="ph"><span class="ph-tag">BROADCAST</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-navi-ewc.png" alt="NAVI выиграли Esports World Cup — CS2" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">CS2 // EWC 2026</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">BROADCAST</span>
+            <h3>NAVI выиграли Esports World Cup</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:42">
+            <div class="ph"><span class="ph-tag">HERITAGE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-yamal-ballon.png" alt="Ямаль: гонка за Золотым мячом" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">ГОНКА // BALLON D'OR</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">HERITAGE</span>
+            <h3>Ямаль: гонка за Золотым мячом</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:28">
+            <div class="ph"><span class="ph-tag">DOPAMINE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-rodri-barca.png" alt="Родри — трансфер в Барселону за €115M" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">ТРАНСФЕР // €115M</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">DOPAMINE</span>
+            <h3>Родри → Барселона · €115M</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:28">
+            <div class="ph"><span class="ph-tag">DOPAMINE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-rogers-chelsea.png" alt="Роджерс — трансфер в Челси за £65M" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">ТРАНСФЕР // £65M</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">DOPAMINE</span>
+            <h3>Роджерс → Челси · £65M</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:185">
+            <div class="ph"><span class="ph-tag">GLASS</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-ederson-city.png" alt="Эдерсон — трансфер в Ман Сити за €60M" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">ТРАНСФЕР // €60M</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">GLASS</span>
+            <h3>Эдерсон → Ман Сити · €60M</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:195">
+            <div class="ph"><span class="ph-tag">CINEMATIC</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-epl-start.png" alt="АПЛ 2026/27: старт сезона" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">АПЛ // 2026/27</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">CINEMATIC</span>
+            <h3>АПЛ 2026/27: старт сезона</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="football">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:195">
+            <div class="ph"><span class="ph-tag">CINEMATIC</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-zenit-supercup.png" alt="Зенит 3:1 Спартак — Суперкубок" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">СУПЕРКУБОК // 3:1</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">CINEMATIC</span>
+            <h3>Зенит 3:1 Спартак · Суперкубок</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="other">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:42">
+            <div class="ph"><span class="ph-tag">HERITAGE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-usopen-2026.png" alt="US Open 2026: старт в Нью-Йорке" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">ТЕННИС // NYC</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">HERITAGE</span>
+            <h3>US Open 2026: старт в Нью-Йорке</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="other">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:185">
+            <div class="ph"><span class="ph-tag">GLASS</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-f1-title.png" alt="F1: Антонелли против Хэмилтона" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">F1 // БОРЬБА ЗА ТИТУЛ</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">GLASS</span>
+            <h3>F1: Антонелли vs Хэмилтон</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="other">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:28">
+            <div class="ph"><span class="ph-tag">DOPAMINE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-nba-murray.png" alt="Мюррей — трейд в Кливленд, НБА" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">НБА // ТРЕЙД</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">DOPAMINE</span>
+            <h3>Мюррей → Кливленд</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="other">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:0">
+            <div class="ph"><span class="ph-tag">GRUNGE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-romero-cruz.png" alt="Ромеро против Круса II — бокс" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">БОКС // РЕВАНШ</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">GRUNGE</span>
+            <h3>Ромеро vs Крус II</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:210">
+            <div class="ph"><span class="ph-tag">HUD</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-ti2026-playoffs.png" alt="The International 2026: плей-офф — Dota 2" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">DOTA 2 // TI2026</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">HUD</span>
+            <h3>The International 2026: плей-офф</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:210">
+            <div class="ph"><span class="ph-tag">HUD</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-lck-final.png" alt="LCK: Gen.G обыграли T1 — League of Legends" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">LOL // LCK FINAL</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">HUD</span>
+            <h3>LCK: Gen.G обыграли T1</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:185">
+            <div class="ph"><span class="ph-tag">GLASS</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-valorant-champions.png" alt="Valorant Champions 2026 — Сеул" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">VALORANT // СЕУЛ</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">GLASS</span>
+            <h3>Valorant Champions 2026 · Сеул</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:0">
+            <div class="ph"><span class="ph-tag">GRUNGE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-evo-2026.png" alt="EVO 2026: итоги Street Fighter 6" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">SF6 // EVO 2026</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">GRUNGE</span>
+            <h3>EVO 2026: итоги SF6</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:210">
+            <div class="ph"><span class="ph-tag">HUD</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-pubg-pgs.png" alt="Petrichor Road выиграли PGS — PUBG" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">PUBG // PGS</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">HUD</span>
+            <h3>Petrichor Road выиграли PGS</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:195">
+            <div class="ph"><span class="ph-tag">CINEMATIC</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-apex-algs.png" alt="Team Falcons — чемпионы ALGS, Токио — Apex Legends" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">APEX // ТОКИО</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">CINEMATIC</span>
+            <h3>Team Falcons — чемпионы ALGS</h3>
+          </div>
+        </div>
+      </article>
+
+      <article class="work-card reveal" data-cat="esports">
+        <div class="tilt work-tilt glass hud" data-tilt="7">
+          <div class="work-media" style="--fh:28">
+            <div class="ph"><span class="ph-tag">DOPAMINE</span><span class="ph-meta">EVENT</span></div>
+            <img src="assets/img/works/final/evt-brawl-zeta.png" alt="Zeta Division: победа в EMEA — Brawl Stars" loading="lazy" decoding="async" data-fallback>
+            <span class="wm-label">BRAWL STARS // EMEA</span>
+          </div>
+          <div class="work-info">
+            <span class="tag">DOPAMINE</span>
+            <h3>Zeta Division: победа в EMEA</h3>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ КЕЙСЫ ============ -->
+  <section class="section" id="cases">
+    <div class="sec-head reveal">
+      <p class="kicker">02 // Кейсы</p>
+      <h2>Три задачи новостного цикла</h2>
+    </div>
+
+    <article class="case reveal">
+      <div class="case-visual">
+        <div class="tilt case-frame hud" data-tilt="5" style="--fh:42">
+          <div class="ph"><span class="ph-tag">CASE 01 // ЧМ-2026</span><span class="ph-meta">EVENT</span></div>
+          <img src="assets/img/works/final/evt-spain-wc2026.png" alt="Карточка чемпионства Испании на ЧМ-2026" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-mini cm-1" style="--fh:195">
+          <div class="ph"><span class="ph-tag">CINEMATIC</span></div>
+          <img src="assets/img/works/final/evt-mbappe-real.png" alt="Карточка «Мбаппе. Новая эра»" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-mini cm-2" style="--fh:42">
+          <div class="ph"><span class="ph-tag">HERITAGE</span></div>
+          <img src="assets/img/works/final/evt-yamal-ballon.png" alt="Карточка «Ямаль: гонка за Золотым мячом»" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-chip glass" data-depth="0.3"><b>1 вечер</b><span>на серию финала</span></div>
+      </div>
+      <div class="case-body">
+        <p class="kicker">Case 01 // Football // ЧМ-2026</p>
+        <h3>Чемпионская серия ЧМ-2026</h3>
+        <dl class="psr">
+          <div>
+            <dt>Проблема</dt>
+            <dd>Финал чемпионата мира рождает десятки инфоповодов за один вечер — каждому нужна карточка в едином стиле, пока новость горячая.</dd>
+          </div>
+          <div>
+            <dt>Решение</dt>
+            <dd>Editorial-система турнира: единая сетка, палитра и типографика. Генерация в ComfyUI + детерминированная вёрстка на Python/Pillow.</dd>
+          </div>
+          <div>
+            <dt>Результат</dt>
+            <dd>Серия по итогам турнира — от чемпионства Испании до гонки Ямаля за Золотой мяч — консистентна от карточки к карточке.</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="case reveal">
+      <div class="case-visual">
+        <div class="tilt case-frame hud" data-tilt="5" style="--fh:215">
+          <div class="ph"><span class="ph-tag">CASE 02 // ESPORTS</span><span class="ph-meta">EVENT</span></div>
+          <img src="assets/img/works/final/evt-navi-ewc.png" alt="Карточка победы NAVI на Esports World Cup" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-mini cm-1" style="--fh:210">
+          <div class="ph"><span class="ph-tag">HUD</span></div>
+          <img src="assets/img/works/final/evt-ti2026-playoffs.png" alt="Карточка плей-офф The International 2026" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-mini cm-2" style="--fh:210">
+          <div class="ph"><span class="ph-tag">HUD</span></div>
+          <img src="assets/img/works/final/evt-lck-final.png" alt="Карточка финала LCK: Gen.G против T1" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-mini cm-3" style="--fh:185">
+          <div class="ph"><span class="ph-tag">GLASS</span></div>
+          <img src="assets/img/works/final/evt-valorant-champions.png" alt="Карточка Valorant Champions 2026 в Сеуле" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-chip glass" data-depth="0.3"><b>4</b><span>дисциплины в одной системе</span></div>
+      </div>
+      <div class="case-body">
+        <p class="kicker">Case 02 // Esports // Плей-офф</p>
+        <h3>Киберспортивный хаб</h3>
+        <dl class="psr">
+          <div>
+            <dt>Проблема</dt>
+            <dd>Плей-офф сразу по четырём дисциплинам — CS2, Dota 2, LoL, Valorant. Каждой нужен broadcast-визуал в общем HUD-языке, в темпе трансляций.</dd>
+          </div>
+          <div>
+            <dt>Решение</dt>
+            <dd>Модульная HUD-система: общие сетки, таймстампы, статистика. Character consistency и image-to-image вариации в ComfyUI.</dd>
+          </div>
+          <div>
+            <dt>Результат</dt>
+            <dd>Один визуальный язык для всех турниров — от NAVI на Esports World Cup до плей-офф The International.</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="case reveal">
+      <div class="case-visual">
+        <div class="tilt case-frame hud" data-tilt="5" style="--fh:28">
+          <div class="ph"><span class="ph-tag">CASE 03 // DEADLINE</span><span class="ph-meta">EVENT</span></div>
+          <img src="assets/img/works/final/evt-rodri-barca.png" alt="Карточка трансфера Родри в Барселону" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-mini cm-1" style="--fh:28">
+          <div class="ph"><span class="ph-tag">DOPAMINE</span></div>
+          <img src="assets/img/works/final/evt-rogers-chelsea.png" alt="Карточка трансфера Роджерса в Челси" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-mini cm-2" style="--fh:185">
+          <div class="ph"><span class="ph-tag">GLASS</span></div>
+          <img src="assets/img/works/final/evt-ederson-city.png" alt="Карточка трансфера Эдерсона в Ман Сити" loading="lazy" decoding="async" data-fallback>
+        </div>
+        <div class="case-chip glass" data-depth="0.3"><b>минуты</b><span>от инфоповода до карточки</span></div>
+      </div>
+      <div class="case-body">
+        <p class="kicker">Case 03 // Transfers // Deadline day</p>
+        <h3>Трансферный дедлайн</h3>
+        <dl class="psr">
+          <div>
+            <dt>Проблема</dt>
+            <dd>В день дедлайна трансферы подтверждаются каждые несколько минут — редакции нужна карточка сразу после инфоповода.</dd>
+          </div>
+          <div>
+            <dt>Решение</dt>
+            <dd>Dopamine breaking-news шаблон: готовая сетка и банк стилей; генерация, отбор и вёрстка по манифесту — без ручной сборки.</dd>
+          </div>
+          <div>
+            <dt>Результат</dt>
+            <dd>Карточка за минуты после подтверждения: Родри, Роджерс и Эдерсон вышли единой серией в день дедлайна.</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ НАВЫКИ ============ -->
+  <section class="section" id="skills">
+    <div class="sec-head reveal">
+      <p class="kicker">03 // Навыки</p>
+      <h2>Инструменты производства</h2>
+      <p class="sec-note">Не «промптер с галереей», а воспроизводимое производство: шаблоны, банки ассетов, QA-чеклисты. Все серии — AI-генерация плюс ручная режиссура, отбор и типографика.</p>
+    </div>
+
+    <div class="bento">
+      <div class="bcell b-hero glass hud reveal">
+        <span class="bmeta">PRODUCTION // 2024—2026</span>
+        <b class="bnum">30 000<span class="acc">+</span></b>
+        <p>сгенерированных и оплаченных клиентами артефактов на собственной платформе — дизайн-система, шаблонный движок, контроль качества выдачи.</p>
+        <span class="bmeta">FLUX // REPLICATE // QA</span>
+      </div>
+      <div class="bcell glass reveal">
+        <h3>Пайплайны</h3>
+        <p>Воспроизводимые workflow в ComfyUI: character consistency, модульные кампании, image-to-image вариации с сохранением идентичности.</p>
+        <span class="bmeta">COMFYUI // FLUX // SD</span>
+      </div>
+      <div class="bcell glass reveal">
+        <h3>AI-видео</h3>
+        <p>Режиссура multi-shot роликов: сценарий, раскадровка, монтаж — консистентные персонажи и стиль между сценами.</p>
+        <span class="bmeta">HIGGSFIELD // MULTI-SHOT</span>
+      </div>
+      <div class="bcell glass reveal">
+        <h3>Типографика</h3>
+        <p>Детерминированная вёрстка на Python/Pillow: чистая кириллица без артефактов генератора, манифест-driven серии карточек.</p>
+        <span class="bmeta">PYTHON // PILLOW // CYRILLIC</span>
+      </div>
+      <div class="bcell glass reveal">
+        <h3>Performance</h3>
+        <p>Креативы под CPA/ROI-метрики: баннер должен продавать, а не только нравиться. Сотни лендингов под конверсионные требования.</p>
+        <span class="bmeta">CPA // ROI // SOCIAL</span>
+      </div>
+      <div class="bcell b-wide glass hud reveal">
+        <h3>Стек и навыки</h3>
+        <div class="chips">
+          <span class="chip">AI-генерация изображений</span>
+          <span class="chip">FLUX / Stable Diffusion</span>
+          <span class="chip">ComfyUI</span>
+          <span class="chip">Higgsfield</span>
+          <span class="chip">Recraft</span>
+          <span class="chip">Replicate</span>
+          <span class="chip">Midjourney-класс моделей</span>
+          <span class="chip">Prompt engineering</span>
+          <span class="chip">Character consistency</span>
+          <span class="chip">Python + Pillow</span>
+          <span class="chip">Типографика</span>
+          <span class="chip">Дизайн-системы</span>
+          <span class="chip">Performance-креативы</span>
+          <span class="chip">Контроль качества</span>
+          <span class="chip">Research-driven workflow</span>
+          <span class="chip">Скорость новостного цикла</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ПРОЦЕСС ============ -->
+  <section class="section" id="process">
+    <div class="sec-head reveal">
+      <p class="kicker">04 // Процесс</p>
+      <h2>Как рождается серия</h2>
+    </div>
+
+    <ol class="steps">
+      <li class="step glass hud reveal">
+        <div class="step-top"><span class="snum">01</span><span class="smeta">RESEARCH</span></div>
+        <h3>Ресерч трендов</h3>
+        <p>Мониторинг визуальных трендов спорта и киберспорта: что сейчас останавливает скролл в лентах — и почему.</p>
+      </li>
+      <li class="step glass hud reveal">
+        <div class="step-top"><span class="snum">02</span><span class="smeta">MOODBOARD</span></div>
+        <h3>Референсы и мудборд</h3>
+        <p>Визуальный язык серии до первой генерации: палитра, фактура, типографика, сетка.</p>
+      </li>
+      <li class="step glass hud reveal">
+        <div class="step-top"><span class="snum">03</span><span class="smeta">GENERATE + SELECT</span></div>
+        <h3>Генерация и отбор</h3>
+        <p>Прогоны в ComfyUI и FLUX, отбор из десятков вариантов, ручной QA финальных артефактов.</p>
+      </li>
+      <li class="step glass hud reveal">
+        <div class="step-top"><span class="snum">04</span><span class="smeta">TYPE + LAYOUT</span></div>
+        <h3>Детерминированная типографика</h3>
+        <p>Вёрстка на Python/Pillow: чистая кириллица, точная сетка, воспроизводимый результат.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ КОНТАКТЫ ============ -->
+  <section class="section contacts" id="contacts">
+    <div class="contact-panel glass hud reveal">
+      <p class="kicker">05 // Контакты</p>
+      <h2>Нужен визуал со скоростью новостного цикла?</h2>
+      <p>Расскажите о формате вашего медиа — пришлю релевантные серии карточек и раскадровки AI-видео.</p>
+      <div class="contact-rows">
+        <a class="crow" href="https://t.me/ai_sport_design" target="_blank" rel="noopener">
+          <span class="ckey">TELEGRAM</span><span class="cval">@ai_sport_design</span><span class="cgo">→</span>
+        </a>
+        <a class="crow" href="mailto:hello@ai-sport.design">
+          <span class="ckey">EMAIL</span><span class="cval">hello@ai-sport.design</span><span class="cgo">→</span>
+        </a>
+      </div>
+      <p class="cnote">ОТВЕТ // В ТЕЧЕНИЕ ДНЯ // МСК</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">© 2026 // AI-ДИЗАЙН СПОРТИВНЫХ МЕДИА // СДЕЛАНО ЧЕЛОВЕКОМ + AI</footer>
+
+<script>
+(() => {
+  'use strict';
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* Плейсхолдер: если ассет ещё не доставлен, убираем битый <img> —
+     под ним остаётся CSS-градиент .ph с hue из --fh карточки. */
+  document.querySelectorAll('img[data-fallback]').forEach(img => {
+    const kill = () => img.remove();
+    if (img.complete && img.naturalWidth === 0) kill();
+    else img.addEventListener('error', kill, { once: true });
+  });
+
+  /* Появление секций при скролле */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Навигация, прогресс-бар, скролл-параллакс hero */
+  const nav = document.getElementById('nav');
+  const progress = document.getElementById('progress');
+  const scrollEls = Array.from(document.querySelectorAll('[data-scroll]'));
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      nav.classList.toggle('scrolled', y > 30);
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.transform = 'scaleX(' + (h > 0 ? y / h : 0) + ')';
+      if (!reduceMotion) {
+        scrollEls.forEach(el => {
+          el.style.transform = 'translate3d(0,' + (y * parseFloat(el.dataset.scroll)).toFixed(1) + 'px,0)';
+        });
+      }
+      ticking = false;
+    });
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* Активный пункт меню */
+  const links = Array.from(document.querySelectorAll('.nav-links a'));
+  const secIO = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('section[id]').forEach(s => secIO.observe(s));
+
+  /* Фильтр галереи по виду спорта: скрытые карточки уходят из сетки,
+     показанные появляются каскадом с лёгким translateZ */
+  const fchips = Array.from(document.querySelectorAll('.fchip'));
+  const workCards = Array.from(document.querySelectorAll('.work-card'));
+  fchips.forEach(btn => {
+    btn.addEventListener('click', () => {
+      fchips.forEach(b => b.classList.toggle('is-active', b === btn));
+      const f = btn.dataset.filter;
+      let i = 0;
+      workCards.forEach(card => {
+        const show = f === 'all' || card.dataset.cat === f;
+        if (show) {
+          card.classList.remove('is-filtered-out');
+          card.classList.remove('anim-in');
+          void card.offsetWidth;
+          card.style.animationDelay = (i++ * 35) + 'ms';
+          card.classList.add('anim-in');
+        } else {
+          card.classList.add('is-filtered-out');
+        }
+      });
+    });
+  });
+
+  if (reduceMotion || !finePointer) return;
+
+  /* Мышиный параллакс по слоям глубины */
+  const depthEls = Array.from(document.querySelectorAll('[data-depth]'));
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+  addEventListener('pointermove', e => {
+    tx = e.clientX / innerWidth - .5;
+    ty = e.clientY / innerHeight - .5;
+  }, { passive: true });
+  (function parallax() {
+    cx += (tx - cx) * .055;
+    cy += (ty - cy) * .055;
+    depthEls.forEach(el => {
+      const d = parseFloat(el.dataset.depth);
+      el.style.transform = 'translate3d(' + (cx * d * 46).toFixed(1) + 'px,' + (cy * d * 34).toFixed(1) + 'px,0)';
+    });
+    requestAnimationFrame(parallax);
+  })();
+
+  /* 3D-наклон карточек за курсором (базовый поворот хранится в data-base) */
+  document.querySelectorAll('.tilt').forEach(card => {
+    const base = card.dataset.base || '';
+    const s = parseFloat(card.dataset.tilt || '7');
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - .5;
+      const py = (e.clientY - r.top) / r.height - .5;
+      card.style.transform = base +
+        ' rotateX(' + (-py * s).toFixed(2) + 'deg)' +
+        ' rotateY(' + (px * s * 1.25).toFixed(2) + 'deg)';
+    });
+    card.addEventListener('pointerleave', () => { card.style.transform = base; });
+  });
+})();
+</script>
+
+<script type="module">
+/* Фоновая 3D-сцена: частицы, сетка-пол, парящие wireframe-фигуры.
+   DPR ≤ 2, пауза на скрытой вкладке, один статичный кадр при reduced-motion. */
+try {
+  const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canvas = document.getElementById('bg3d');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x05060a, 0.05);
+  const camera = new THREE.PerspectiveCamera(60, 1, .1, 120);
+  camera.position.set(0, 0, 14);
+
+  function makePoints(count, color, size, opacity, spread) {
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      pos[i * 3]     = (Math.random() - .5) * spread[0];
+      pos[i * 3 + 1] = (Math.random() - .5) * spread[1];
+      pos[i * 3 + 2] = (Math.random() - .5) * spread[2] - 8;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const mat = new THREE.PointsMaterial({ color, size, transparent: true, opacity, sizeAttenuation: true, depthWrite: false });
+    const pts = new THREE.Points(geo, mat);
+    scene.add(pts);
+    return pts;
+  }
+  const starsA = makePoints(650, 0x67e8f9, .055, .5, [64, 38, 42]);
+  const starsB = makePoints(420, 0xf3efe7, .04, .32, [70, 42, 48]);
+
+  const grid = new THREE.GridHelper(150, 75, 0x1c3f4d, 0x101d28);
+  grid.material.transparent = true;
+  grid.material.opacity = .5;
+  grid.position.y = -7.5;
+  scene.add(grid);
+
+  const shapes = [];
+  const wire = new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: .14 });
+  const wireDim = new THREE.MeshBasicMaterial({ color: 0x94a3b8, wireframe: true, transparent: true, opacity: .08 });
+  const shapeDefs = [
+    [new THREE.IcosahedronGeometry(1.5, 0), wire,    [-8.2, 2.4, -5]],
+    [new THREE.OctahedronGeometry(1.1, 0),  wire,    [7.4, 3.1, -7]],
+    [new THREE.TorusGeometry(1.1, .3, 8, 28), wireDim, [6.2, -3.4, -3]],
+    [new THREE.IcosahedronGeometry(.9, 0),  wireDim, [-6.8, -3, -4]],
+    [new THREE.TorusKnotGeometry(.8, .24, 48, 6), wire, [0, 5.4, -10]],
+    [new THREE.OctahedronGeometry(1.6, 0),  wireDim, [11, .4, -9]],
+  ];
+  shapeDefs.forEach(([geo, mat, pos], i) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(pos[0], pos[1], pos[2]);
+    m.userData.phase = i * 1.7;
+    scene.add(m);
+    shapes.push(m);
+  });
+
+  let mx = 0, my = 0;
+  addEventListener('pointermove', e => {
+    mx = e.clientX / innerWidth - .5;
+    my = e.clientY / innerHeight - .5;
+  }, { passive: true });
+
+  function resize() {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  }
+  addEventListener('resize', resize);
+  resize();
+
+  const clock = new THREE.Clock();
+  let t = 0, rafId = null;
+  function tick() {
+    const dt = Math.min(clock.getDelta(), .05);
+    t += dt;
+    starsA.rotation.y = t * .012;
+    starsB.rotation.y = -t * .008;
+    grid.position.z = (t * .45) % 2;
+    shapes.forEach((s, i) => {
+      s.rotation.x = t * .1 * (i % 2 ? 1 : -1) + s.userData.phase;
+      s.rotation.y = t * .13;
+      s.position.y += Math.sin(t * .5 + s.userData.phase) * .0016;
+    });
+    camera.position.x += (mx * 1.3 + Math.sin(t * .08) * .3 - camera.position.x) * .03;
+    camera.position.y += (-my * .9 + Math.cos(t * .06) * .2 - camera.position.y) * .03;
+    camera.lookAt(0, 0, -4);
+    renderer.render(scene, camera);
+  }
+  function loop() {
+    tick();
+    rafId = requestAnimationFrame(loop);
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+    } else if (rafId === null && !reduceMotion) {
+      clock.getDelta();
+      loop();
+    }
+  });
+
+  if (reduceMotion) tick();
+  else loop();
+  window.__bgReady = true;
+} catch (e) {
+  window.__bgReady = false;
+}
+</script>
+
+</body>
+</html>
